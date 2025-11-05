@@ -1,7 +1,7 @@
 """
 Module: Contact Manager
 Author: Javier Silva
-Date: [Current Date]
+Date: 11/05/2025
 
 This program provides a menu-driven interface to manage a CSV file
 of contacts. It allows creating a new file, adding contacts,
