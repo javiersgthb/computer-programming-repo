@@ -1,7 +1,7 @@
 """
 Module: Budget Editor Program
 Author: Javier Silva
-Date: 12/05/2025
+Date: [Current Date]
 
 This program manages a budget list. It reads data from a text file, allows
 the user to view, edit, and delete entries, and saves the final data to a
@@ -13,7 +13,7 @@ from datetime import datetime
 import os
 
 # Global constant for the input filename
-INPUT_FILENAME = "unit_2_exam.txt"
+INPUT_FILENAME = "final_exam.txt"
 
 def get_current_time_string():
     """
@@ -27,19 +27,17 @@ def get_current_time_string():
 
 def create_sample_file():
     """
-    Helper function to create the 'unit_2_exam.txt' file with sample data.
-    This ensures the program runs correctly even if the file is missing.
+    Helper function to create the 'final_exam.txt' file.
+    This creates an empty file if it is missing, as requested to remove sample data.
     """
-    # Sample data based on "Month|Amount" structure
-    data = """January|2500.00
-February|2450.50
-March|3000.00
-April|2100.25"""
+    # Empty data or header only if required, prompt implied just the file existence.
+    # We will create an empty file.
+    data = ""
     try:
         with open(INPUT_FILENAME, "w") as file:
             file.write(data)
     except IOError as e:
-        print(f"Error creating sample file: {e}")
+        print(f"Error creating file: {e}")
 
 def read_budget_data():
     """
@@ -77,6 +75,10 @@ def list_budget_entries(data, show_indices=False):
     """
     print("\n--- Current Budget Data ---")
     
+    if not data:
+        print("No budget entries found.")
+        return
+
     # Define column widths for formatting
     w_num = 5
     w_month = 15
@@ -107,6 +109,10 @@ def edit_entry(data):
     Allows the user to select an entry by index and edit its values.
     """
     print("\n--- Edit Entry ---")
+    if not data:
+        print("No entries to edit.")
+        return
+
     # Show list with numbers
     list_budget_entries(data, show_indices=True)
     
@@ -149,6 +155,10 @@ def delete_entry(data):
     Allows the user to select an entry by index and delete it.
     """
     print("\n--- Delete Entry ---")
+    if not data:
+        print("No entries to delete.")
+        return
+
     list_budget_entries(data, show_indices=True)
     
     while True:
@@ -231,11 +241,12 @@ def import_from_file(budget_data):
                 # Skip header if present
                 first_row = next(reader, None)
                 if first_row:
-                    # Basic check if it's a header row
-                    if "month" in first_row[0].lower() and "amount" in first_row[1].lower():
+                    # Basic check if it's a header row (case insensitive)
+                    if len(first_row) >= 2 and "month" in first_row[0].lower() and "amount" in first_row[1].lower():
                         pass # Skip header
-                    else:
-                        if len(first_row) >= 2: entries_to_process.append([first_row[0], first_row[1]])
+                    elif len(first_row) >= 2:
+                         # It wasn't a header, treat as data
+                        entries_to_process.append([first_row[0], first_row[1]])
                 
                 for row in reader:
                     if len(row) >= 2: 
@@ -246,8 +257,7 @@ def import_from_file(budget_data):
                 for line in file:
                     clean_line = line.strip()
                     if clean_line:
-                        # Try split by pipe first, then maybe comma if that fails? 
-                        # Stick to pipe '|' as per txt standard for this app
+                        # Try split by pipe first
                         entry = clean_line.split('|')
                         if len(entry) >= 2:
                             entries_to_process.append(entry)
